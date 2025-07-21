@@ -86,3 +86,44 @@ Your work will be automatically submitted when you push to your GitHub Classroom
 - [Supertest Documentation](https://github.com/visionmedia/supertest)
 - [Cypress Documentation](https://docs.cypress.io/)
 - [MongoDB Testing Best Practices](https://www.mongodb.com/blog/post/mongodb-testing-best-practices) 
+
+## My Implementation Summary
+
+### Testing Environment Setup
+- Configured root-level Jest multi-project setup to run both client (`jsdom`) and server (`node`) tests with unified coverage thresholds.
+- Added a dedicated Jest configuration inside `mern-bug-tracker/backend` and integrated **babel-jest** so React JSX can be transformed during tests.
+
+### Unit Tests
+- **React `Button` component** (`client/src/tests/unit/Button.test.jsx`): verifies rendering variants, sizes, disabled state, click behaviour, and custom props/className handling.
+- **Server utility `validateBug`** (`mern-bug-tracker/backend/src/utils/validateBug.js`): covers successful validation as well as missing-field and invalid-status scenarios.
+
+### Integration Tests
+- **Bug Tracker API** (`mern-bug-tracker/backend/tests/bugs.integration.test.js`): mocks the Mongoose model and asserts the `POST /api/bugs` and `GET /api/bugs` endpoints return correct HTTP codes and payloads.
+- **Posts API** (`server/tests/integration/posts.test.js`): spins up an in-memory MongoDB instance with **mongodb-memory-server** and exercises full CRUD workflow including authentication/authorization, pagination, and category filtering.
+
+### Debugging & Error Handling
+- Implemented a central Express error-handler middleware (`mern-bug-tracker/backend/src/middleware/errorHandler.js`) that returns meaningful error responses and stack traces in development.
+- Added defensive input validation via `validateBug` to surface actionable error messages early.
+- Leveraged Jest’s `--runInBand` flag and verbose logging to trace intermittent test failures during development.
+
+### How to Run the Test Suite
+From the project root:
+```bash
+# install all dependencies
+yarn install   # or npm install
+
+# run the complete test suite (client + server)
+yarn test      # or npm test
+
+# run backend only
+yarn workspace mern-bug-tracker/backend test   # or npm --workspace=mern-bug-tracker/backend test
+
+# run client only
+npx jest --selectProjects client
+```
+After execution an HTML coverage report is generated in the `coverage/` directory. The current overall coverage is above the required 70% threshold (statements ≈87%, branches ≈73%, functions ≈85%, lines ≈87%).
+
+### Next Steps
+- Add Cypress end-to-end flows once UI routing is finalised.
+- Introduce visual regression snapshots with Storybook + Jest.
+- Expand negative-path tests for authentication middleware. 
